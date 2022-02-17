@@ -14,7 +14,7 @@ template <typename T>
 using at_const_expr = typename at_const_expr_impl<T>::type;
 
 template <typename T> struct at_const_expr_impl_aux<T, false> {
-  using type = T &;
+  using type = T const &;
 };
 
 template <typename Types, size_t... ISeq>
@@ -28,15 +28,15 @@ public:
   using Base::Base;
   using Base::get;
 
-  par_at_const_expr(par_at_const_expr const& other):
-    Base(static_cast<Base const&>(other)) {}
+  par_at_const_expr(par_at_const_expr const &other)
+      : Base(static_cast<Base const &>(other)) {}
 
   par_at_const_expr &operator=(par_at_const_expr const &other) = delete;
 
-  par_at_const_expr(par_at_const_expr&& other):
-    Base(static_cast<Base&&>(other)) {}
+  par_at_const_expr(par_at_const_expr &&other)
+      : Base(static_cast<Base &&>(other)) {}
 
-  par_at_const_expr& operator=(par_at_const_expr&& other) = delete;
+  par_at_const_expr &operator=(par_at_const_expr &&other) = delete;
 };
 
 template <typename T> struct at_const_expr_impl_aux<T, true> {

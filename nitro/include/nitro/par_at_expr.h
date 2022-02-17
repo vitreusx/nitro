@@ -24,29 +24,29 @@ public:
   using Base::Base;
   using Base::get;
 
-  par_at_expr(par_at_expr const& other):
-    Base(static_cast<Base const&>(other)) {}
+  par_at_expr(par_at_expr const &other)
+      : Base(static_cast<Base const &>(other)) {}
 
-  par_at_expr &operator=(par_at_expr const &other) {
+  __attribute__((always_inline)) par_at_expr &
+  operator=(par_at_expr const &other) {
     (..., assign<ISeq>(other));
     return *this;
   }
 
   template <typename E> par_at_expr &operator=(ind_expr<E> const &e) {
-    (..., assign<ISeq, E>(static_cast<E const &>(e)));
+    (..., assign<ISeq>(static_cast<E const &>(e)));
     return *this;
   }
 
-  par_at_expr(par_at_expr&& other):
-    Base(static_cast<Base&&>(other)) {}
+  par_at_expr(par_at_expr &&other) : Base(static_cast<Base &&>(other)) {}
 
   par_at_expr &operator=(par_at_expr &&other) noexcept {
-    (..., move<ISeq>(std::forward<par_at_expr>(other)));
+    (..., move<ISeq>(other));
     return *this;
   }
 
   template <typename E> par_at_expr &operator=(ind_expr<E> &&e) noexcept {
-    (..., assign<ISeq, E>(static_cast<E &&>(e)));
+    (..., move<ISeq>(static_cast<E &&>(e)));
     return *this;
   }
 

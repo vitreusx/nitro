@@ -7,6 +7,8 @@
 template <typename... Types> class tuple;
 
 template <> class tuple<> : public ind_expr<tuple<>> {
+public:
+  template <size_t I> using ith_type = void;
   static constexpr size_t num_types = 0;
 };
 
@@ -60,29 +62,22 @@ struct auto_expr_impl<E, tuple<Types...>> {
 template <typename... Types>
 struct is_indexed_impl<tuple<Types...>> : std::true_type {};
 
-template<typename... Types>
-class tuple_wrapper {
+template <typename... Types> class tuple_wrapper {
 public:
-  tuple_wrapper(Types&&... values):
-    data{std::forward<Types>(values)...} {}
+  tuple_wrapper(Types &&...values) : data{std::forward<Types>(values)...} {}
 
-  template<typename E>
-  tuple_wrapper(ind_expr<E> const& e):
-    data{e} {}
+  template <typename E> tuple_wrapper(ind_expr<E> const &e) : data{e} {}
 
-  template<size_t I>
-  decltype(auto) get() {
-    return data.template get<I>();
-  }
+  template <size_t I> decltype(auto) get() { return data.template get<I>(); }
 
-  template<size_t I>
-  decltype(auto) get() const {
+  template <size_t I> decltype(auto) get() const {
     return data.template get<I>();
   }
 
   static constexpr size_t num_types = tuple<Types...>::num_types;
 
-  template<size_t I> using ith_type = typename tuple<Types...>::template ith_type<I>;
+  template <size_t I>
+  using ith_type = typename tuple<Types...>::template ith_type<I>;
 
 private:
   tuple<Types...> data;

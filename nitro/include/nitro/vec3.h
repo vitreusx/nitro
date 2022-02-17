@@ -87,14 +87,51 @@ struct is_indexed_impl<vec3<Scalar>> : std::true_type {};
 using vec3f = vec3<float>;
 
 template <typename E1, typename E2>
+class sum_expr : public vec3_expr<sum_expr<E1, E2>> {
+public:
+  sum_expr(E1 const &e1, E2 const &e2) : e1{e1}, e2{e2} {};
+
+  decltype(auto) x() const { return e1.x() + e2.x(); }
+  decltype(auto) y() const { return e1.y() + e2.y(); }
+  decltype(auto) z() const { return e1.z() + e2.z(); }
+
+private:
+  E1 e1;
+  E2 e2;
+};
+
+template <typename E1, typename E2>
+decltype(auto) operator+(vec3_expr<E1> const &e1, vec3_expr<E2> const &e2) {
+  return sum_expr<E1, E2>(static_cast<E1 const &>(e1),
+                          static_cast<E2 const &>(e2));
+}
+
+template <typename Scalar, typename E>
+class scalar_lmul_expr : public vec3_expr<scalar_lmul_expr<Scalar, E>> {
+public:
+  scalar_lmul_expr(Scalar const &s, E const &e) : s{s}, e{e} {};
+
+  decltype(auto) x() const { return s * e.x(); }
+  decltype(auto) y() const { return s * e.y(); }
+  decltype(auto) z() const { return s * e.z(); }
+
+private:
+  Scalar s;
+  E e;
+};
+
+template <typename Scalar, typename E>
+decltype(auto) operator*(Scalar const &s, vec3_expr<E> const &e) {
+  return scalar_lmul_expr<Scalar, E>(s, static_cast<E const &>(e));
+}
+
+template <typename E1, typename E2>
 class cross_expr : public vec3_expr<cross_expr<E1, E2>> {
 public:
   cross_expr(E1 const &e1, E2 const &e2) : e1{e1}, e2{e2} {};
 
   decltype(auto) x() const { return e1.y() * e2.z() - e1.z() * e2.y(); }
-
   decltype(auto) y() const { return e1.z() * e2.x() - e1.x() * e2.z(); }
-
   decltype(auto) z() const { return e1.x() * e2.y() - e1.y() * e2.x(); }
 
 private:
