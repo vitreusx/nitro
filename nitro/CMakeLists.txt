@@ -29,5 +29,5 @@ target_compile_options(nitro
     INTERFACE
     $<$<CONFIG:Debug>:$<$<COMPILE_LANGUAGE:CXX>:-g>>
     $<$<CONFIG:Release>:$<$<COMPILE_LANGUAGE:CXX>:-g;-O2;-march=native>>
-    $<$<COMPILE_LANGUAGE:CXX>:-Wall;-Wextra;-Wpedantic>)
+    $<$<COMPILE_LANGUAGE:CXX>:-Wall;-Wextra;-Wpedantic;-Werror>)
     
