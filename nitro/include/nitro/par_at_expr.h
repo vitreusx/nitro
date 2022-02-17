@@ -15,13 +15,17 @@ template <typename T> using at_expr = typename at_expr_impl<T>::type;
 template <typename T> struct at_expr_impl_aux<T, false> { using type = T &; };
 
 template <typename Types, size_t... ISeq>
-class par_at_expr
-    : public auto_expr<par_at_expr<Types, ISeq...>, Types>,
-      public tuple<at_expr<typename Types::template ith_type<ISeq>>...> {
+class par_at_expr : public auto_expr<par_at_expr<Types, ISeq...>, Types>,
+                    public tuple_wrapper<
+                        at_expr<typename Types::template ith_type<ISeq>>...> {
 public:
-  using Base = tuple<at_expr<typename Types::template ith_type<ISeq>>...>;
+  using Base =
+      tuple_wrapper<at_expr<typename Types::template ith_type<ISeq>>...>;
   using Base::Base;
   using Base::get;
+
+  par_at_expr(par_at_expr const& other):
+    Base(static_cast<Base const&>(other)) {}
 
   par_at_expr &operator=(par_at_expr const &other) {
     (..., assign<ISeq>(other));
@@ -33,13 +37,16 @@ public:
     return *this;
   }
 
+  par_at_expr(par_at_expr&& other):
+    Base(static_cast<Base&&>(other)) {}
+
   par_at_expr &operator=(par_at_expr &&other) noexcept {
     (..., move<ISeq>(std::forward<par_at_expr>(other)));
     return *this;
   }
 
-  template<typename E> par_at_expr& operator=(ind_expr<E>&& e) noexcept {
-    (..., assign<ISeq, E>(static_cast<E&&>(e)));
+  template <typename E> par_at_expr &operator=(ind_expr<E> &&e) noexcept {
+    (..., assign<ISeq, E>(static_cast<E &&>(e)));
     return *this;
   }
 

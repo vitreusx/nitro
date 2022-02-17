@@ -64,29 +64,21 @@ template <typename E, typename Scalar> struct auto_expr_impl<E, vec3<Scalar>> {
   using type = vec3_auto_expr<E>;
 };
 
-template <typename Scalar> class vec3 : public vec3_auto_expr<vec3<Scalar>> {
+template <typename Scalar>
+class vec3 : public vec3_auto_expr<vec3<Scalar>>,
+             public tuple_wrapper<Scalar, Scalar, Scalar> {
 public:
-  vec3() : vec3((Scalar)0, (Scalar)0, (Scalar)0) {}
+  using Base = tuple_wrapper<Scalar, Scalar, Scalar>;
+  using Base::get;
+
+  vec3() : Base((Scalar)0, (Scalar)0, (Scalar)0) {}
 
   vec3(Scalar &&x, Scalar &&y, Scalar &&z)
-      : _data{std::forward<Scalar>(x), std::forward<Scalar>(y),
-              std::forward<Scalar>(z)} {}
+      : Base(std::forward<Scalar>(x), std::forward<Scalar>(y),
+             std::forward<Scalar>(z)) {}
 
   template <typename E>
   vec3(vec3_expr<E> const &e) : vec3(e.x(), e.y(), e.z()) {}
-
-  template <size_t I> decltype(auto) get() { return _data.template get<I>(); }
-
-  template <size_t I> decltype(auto) get() const {
-    return _data.template get<I>();
-  }
-
-  using Signature = type_list<Scalar, Scalar, Scalar>;
-  static constexpr size_t num_types = Signature::num_types;
-  template <size_t I> using ith_type = typename Signature::template ith_type<I>;
-
-private:
-  tuple<Scalar, Scalar, Scalar> _data;
 };
 
 template <typename Scalar>
