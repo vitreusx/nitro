@@ -1,18 +1,9 @@
 #pragma once
 #include <cstddef>
+#include <nitro/at.h>
 #include <nitro/expr.h>
-#include <nitro/indexed.h>
 #include <nitro/tuple.h>
 #include <utility>
-
-template <typename T, bool Indexed> struct at_expr_impl_aux;
-
-template <typename T>
-struct at_expr_impl : at_expr_impl_aux<T, is_indexed<T>> {};
-
-template <typename T> using at_expr = typename at_expr_impl<T>::type;
-
-template <typename T> struct at_expr_impl_aux<T, false> { using type = T &; };
 
 template <typename Types, size_t... ISeq>
 class par_at_expr : public auto_expr<par_at_expr<Types, ISeq...>, Types>,
@@ -27,8 +18,9 @@ public:
   par_at_expr(par_at_expr const &other)
       : Base(static_cast<Base const &>(other)) {}
 
-  __attribute__((always_inline)) par_at_expr &
-  operator=(par_at_expr const &other) {
+  par_at_expr(par_at_expr &&other) : Base(static_cast<Base &&>(other)) {}
+
+  par_at_expr &operator=(par_at_expr const &other) {
     (..., assign<ISeq>(other));
     return *this;
   }
@@ -37,8 +29,6 @@ public:
     (..., assign<ISeq>(static_cast<E const &>(e)));
     return *this;
   }
-
-  par_at_expr(par_at_expr &&other) : Base(static_cast<Base &&>(other)) {}
 
   par_at_expr &operator=(par_at_expr &&other) noexcept {
     (..., move<ISeq>(other));
@@ -60,7 +50,7 @@ private:
   }
 };
 
-template <typename T> struct at_expr_impl_aux<T, true> {
+template <typename T> struct at_expr_aux<T, true> {
 private:
   template <size_t... ISeq>
   static auto aux(std::index_sequence<ISeq...>) -> par_at_expr<T, ISeq...> {}

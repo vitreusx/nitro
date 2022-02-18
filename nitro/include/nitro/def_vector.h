@@ -1,5 +1,7 @@
 #pragma once
 #include <memory>
+#include <nitro/lane_at.h>
+#include <nitro/lane_const_at.h>
 
 template <typename T, typename Alloc, typename Idx> class def_vector {
 public:
@@ -62,6 +64,18 @@ public:
   T &operator[](Idx idx) { return data[idx]; }
 
   T const &operator[](Idx idx) const { return data[idx]; }
+
+  template <size_t N> def_lane_at<T, N> lane_at(Idx idx) {
+    return def_lane_at<T, N>(data[N * idx]);
+  }
+
+  template <size_t N> lane<T, N> lane_at(Idx idx) const {
+    lane<T, N> res;
+    res.load(data + N * idx);
+    return res;
+  }
+
+  template <size_t N> Idx num_lanes() const { return size() / N; }
 
 private:
   void destroy() {

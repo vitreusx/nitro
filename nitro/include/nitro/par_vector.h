@@ -1,9 +1,11 @@
 #pragma once
 #include <cstddef>
 #include <nitro/expr.h>
+#include <nitro/par_at.h>
+#include <nitro/par_const_at.h>
+#include <nitro/par_lane_at.h>
+#include <nitro/par_lane_const_at.h>
 #include <nitro/vector_decl.h>
-#include <nitro/par_at_expr.h>
-#include <nitro/par_at_const_expr.h>
 
 template <typename Types, typename Allocs, typename Idx, size_t... ISeq>
 class par_vector {
@@ -31,12 +33,22 @@ public:
   Idx capacity() const { return slices.template get<0>().capacity(); }
 
   at_expr<Types> operator[](Idx idx) {
-    return { slices.template get<ISeq>()[idx]... };
+    return {slices.template get<ISeq>()[idx]...};
   }
 
-  at_const_expr<Types> operator[](Idx idx) const {
-    return { slices.template get<ISeq>()[idx]... };
+  const_at_expr<Types> operator[](Idx idx) const {
+    return {slices.template get<ISeq>()[idx]...};
   }
+
+  template <size_t N> lane_at_expr<Types, N> lane_at(Idx idx) {
+    return {slices.template get<ISeq>().template lane_at<N>(idx)...};
+  }
+
+  template <size_t N> lane_const_at_expr<Types, N> lane_at(Idx idx) const {
+    return {slices.template get<ISeq>().template lane_at<N>(idx)...};
+  }
+
+  template <size_t N> Idx num_lanes() const { return size() / N; }
 
 private:
   tuple<slice<ISeq>...> slices;
