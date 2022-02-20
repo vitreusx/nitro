@@ -3,6 +3,7 @@
 #include <nitro/lane_at.h>
 #include <nitro/lane_const_at.h>
 
+namespace nitro {
 template <typename T, typename Alloc, typename Idx> class def_vector {
 public:
   def_vector() : def_vector(Alloc()){};
@@ -90,3 +91,5 @@ private:
   Idx _size, _capacity;
   Alloc alloc;
 };
+
+}

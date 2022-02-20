@@ -3,6 +3,7 @@
 #include <nitro/par_vector.h>
 #include <nitro/vector_decl.h>
 
+namespace nitro {
 template <typename T, typename Alloc, typename Idx, bool Indexed>
 struct vector_impl_aux;
 
@@ -24,3 +25,4 @@ private:
 public:
   using type = decltype(aux(std::make_index_sequence<T::num_types>{}));
 };
+}

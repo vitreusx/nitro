@@ -3,6 +3,7 @@
 #include <nitro/vec3.h>
 #include <nitro/vector.h>
 #include <random>
+using namespace nitro;
 
 void saxpy1(vector<vec3f> const &x, vector<vec3f> const &y, vector<vec3f> &z,
             float a) {

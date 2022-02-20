@@ -3,6 +3,8 @@
 #include <nitro/indexed.h>
 #include <nitro/lane.h>
 
+namespace nitro {
+
 template <typename T, size_t N, bool Indexed> struct lane_at_expr_aux;
 
 template <typename T, size_t N>
@@ -55,3 +57,4 @@ private:
 template <typename T, size_t N> struct lane_at_expr_aux<T, N, false> {
   using type = def_lane_at<T, N>;
 };
+}

@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <vcl/vectorclass.h>
 
+namespace nitro {
 template <typename T, size_t N> struct lane_impl;
 template <typename T, size_t N> using lane = typename lane_impl<T, N>::type;
 
@@ -42,6 +43,8 @@ LANE_IMPL(uint64_t, 8, Vec8uq);
 LANE_IMPL(float, 16, Vec16f);
 LANE_IMPL(double, 8, Vec8d);
 
+#undef LANE_IMPL
+
 template <typename T> struct mask_impl;
 template <typename T> using mask = typename mask_impl<T>::type;
 
@@ -72,3 +75,7 @@ MASK2_IMPL(Vec16i, Vec16ui, Vec16ib);
 MASK2_IMPL(Vec8q, Vec8uq, Vec8qb);
 MASK_IMPL(Vec16f, Vec16fb);
 MASK_IMPL(Vec8d, Vec8db);
+
+#undef MASK2_IMPL
+#undef MASK_IMPl
+}

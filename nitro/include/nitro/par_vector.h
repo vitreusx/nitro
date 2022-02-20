@@ -7,6 +7,7 @@
 #include <nitro/par_lane_const_at.h>
 #include <nitro/vector_decl.h>
 
+namespace nitro {
 template <typename Types, typename Allocs, typename Idx, size_t... ISeq>
 class par_vector {
 public:
@@ -53,3 +54,4 @@ public:
 private:
   tuple<slice<ISeq>...> slices;
 };
+}

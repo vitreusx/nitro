@@ -3,6 +3,7 @@
 #include <nitro/lane_const_at.h>
 #include <nitro/tuple.h>
 
+namespace nitro {
 template <typename T, size_t N, size_t... ISeq>
 class par_lane_const_at_expr
     : public auto_expr<par_lane_const_at_expr<T, N, ISeq...>, T>,
@@ -34,3 +35,4 @@ private:
 public:
   using type = decltype(aux(std::make_index_sequence<T::num_types>{}));
 };
+}

@@ -4,6 +4,7 @@
 #include <nitro/type_list.h>
 #include <utility>
 
+namespace nitro {
 template <typename... Types> class tuple;
 
 template <> class tuple<> : public ind_expr<tuple<>> {
@@ -82,3 +83,4 @@ public:
 private:
   tuple<Types...> data;
 };
+}

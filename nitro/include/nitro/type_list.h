@@ -1,6 +1,7 @@
 #pragma once
 #include <cstddef>
 
+namespace nitro {
 template <typename... Types> struct type_list;
 
 template <size_t I, typename Head, typename... Tail>
@@ -76,3 +77,4 @@ struct map_impl<F, type_list<Types...>> {
 template <template <typename> typename F> struct to_functor {
   template <typename T> using apply = F<T>;
 };
+}

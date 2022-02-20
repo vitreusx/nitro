@@ -5,6 +5,8 @@
 #include <nitro/tuple.h>
 #include <utility>
 
+namespace nitro {
+
 template <typename Types, size_t... ISeq>
 class par_const_at_expr
     : public auto_expr<par_const_at_expr<Types, ISeq...>, Types>,
@@ -35,3 +37,4 @@ private:
 public:
   using type = decltype(aux(std::make_index_sequence<T::num_types>{}));
 };
+}

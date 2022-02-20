@@ -4,6 +4,7 @@
 #include <nitro/tuple.h>
 #include <ostream>
 
+namespace nitro {
 template <typename Scalar> class vec3;
 
 template <typename E> struct vec3_expr : public ind_expr<E> {
@@ -149,4 +150,6 @@ template <typename E>
 std::ostream &operator<<(std::ostream &os, vec3_expr<E> const &e) {
   os << "(" << e.x() << ", " << e.y() << ", " << e.z() << ")";
   return os;
+}
+
 }

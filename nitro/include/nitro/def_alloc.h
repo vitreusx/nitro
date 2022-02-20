@@ -3,6 +3,7 @@
 #include <nitro/indexed.h>
 #include <nitro/tuple.h>
 
+namespace nitro {
 template <typename T> struct def_alloc_impl;
 
 template <typename T> using def_alloc = typename def_alloc_impl<T>::type;
@@ -37,3 +38,5 @@ public:
 template <typename T> struct def_alloc_impl_aux<T, false> {
   using type = std::allocator<T>;
 };
+
+}
