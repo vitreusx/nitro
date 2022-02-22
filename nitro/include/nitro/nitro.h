@@ -1,7 +1,9 @@
 #pragma once
 
-#include "indexed.h"
 #include "expr.h"
-#include "vector.h"
-#include "tuple.h"
+#include "indexed.h"
 #include "lane.h"
+#include "macros.h"
+#include "set.h"
+#include "tuple.h"
+#include "vector.h"

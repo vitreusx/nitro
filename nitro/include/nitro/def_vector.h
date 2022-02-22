@@ -66,6 +66,10 @@ public:
 
   T const &operator[](Idx idx) const { return data[idx]; }
 
+  T &at(Idx idx) { return (*this)[idx]; }
+
+  T const &at(Idx idx) const { return (*this)[idx]; }
+
   template <size_t N> def_lane_at<T, N> lane_at(Idx idx) {
     return def_lane_at<T, N>(data[N * idx]);
   }
@@ -77,6 +81,46 @@ public:
   }
 
   template <size_t N> Idx num_lanes() const { return size() / N; }
+
+  void clear() { destroy(); }
+
+  void reserve(Idx new_capacity) {
+    if (new_capacity <= _capacity)
+      return;
+
+    auto new_data = alloc.allocate(new_capacity);
+    std::uninitialized_move_n(data, _size, new_data);
+    std::destroy_n(data, _size);
+    alloc.deallocate(data, _capacity);
+    data = new_data;
+    _capacity = new_capacity;
+  }
+
+  void resize(Idx new_size, T const &init = T()) {
+    if (new_size < _size) {
+      std::destroy_n(data + new_size, _size - new_size);
+    } else {
+      reserve(new_size);
+      std::uninitialized_fill_n(data + _size, new_size - _size, init);
+    }
+    _size = new_size;
+  }
+
+  void push_back(T const &value) {
+    if (_size + 1 > _capacity)
+      reserve(2 * (_size + 1) + 8);
+
+    std::uninitialized_copy_n(&value, 1, data + _size);
+    ++_size;
+  }
+
+  template <typename... Args> T& emplace_back(Args &&...args) {
+    if (_size + 1 > _capacity)
+      reserve(2 * (_size + 1) + 8);
+
+    ::new (data + _size) T(std::forward<Args>(args)...);
+    return data[_size++];
+  }
 
 private:
   void destroy() {
@@ -92,4 +136,4 @@ private:
   Alloc alloc;
 };
 
-}
+} // namespace nitro

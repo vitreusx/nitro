@@ -16,8 +16,7 @@ public:
 template <typename Head, typename... Tail>
 class tuple<Head, Tail...> : public ind_expr<tuple<Head, Tail...>> {
 public:
-  tuple(Head &&head, Tail &&...tail)
-      : head{std::forward<Head>(head)}, tail{std::forward<Tail>(tail)...} {}
+  tuple(Head const &head, Tail const &...tail) : head{head}, tail{tail...} {}
 
   template <typename E>
   tuple(ind_expr<E> const &e)
@@ -65,7 +64,7 @@ struct is_indexed_impl<tuple<Types...>> : std::true_type {};
 
 template <typename... Types> class tuple_wrapper {
 public:
-  tuple_wrapper(Types &&...values) : data{std::forward<Types>(values)...} {}
+  tuple_wrapper(Types const &...values) : data{values...} {}
 
   template <typename E> tuple_wrapper(ind_expr<E> const &e) : data{e} {}
 
@@ -83,4 +82,4 @@ public:
 private:
   tuple<Types...> data;
 };
-}
+} // namespace nitro
