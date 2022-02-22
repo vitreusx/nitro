@@ -20,7 +20,7 @@ public:
 
   template <typename E>
   tuple(ind_expr<E> const &e)
-      : tuple(e, std::make_index_sequence<E::num_types>{}) {}
+      : tuple(e, std::make_index_sequence<1+sizeof...(Tail)>{}) {}
 
   template <size_t I> decltype(auto) get() {
     if constexpr (I == 0)
