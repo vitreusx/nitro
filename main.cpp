@@ -1,6 +1,5 @@
 #include <iostream>
-#include <nitro/lane.h>
-#include <nitro/vector.h>
+#include <nitro/nitro.h>
 #include <random>
 using namespace nitro;
 

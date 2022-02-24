@@ -1,4 +1,6 @@
 #pragma once
+#include "par_const_view.h"
+#include "par_view.h"
 #include <cstddef>
 #include <nitro/expr.h>
 #include <nitro/par_at.h>
@@ -54,6 +56,15 @@ public:
   }
 
   template <size_t N> Idx num_lanes() const { return size() / N; }
+
+  par_view<Types, Idx, ISeq...> view() {
+    return par_view<Types, Idx, ISeq...>(slices.template get<ISeq>().view()...);
+  }
+
+  par_const_view<Types, Idx, ISeq...> view() const {
+    return par_const_view<Types, Idx, ISeq...>(
+        slices.template get<ISeq>().view()...);
+  }
 
   void clear() { (..., slices.template get<ISeq>().clear()); }
 

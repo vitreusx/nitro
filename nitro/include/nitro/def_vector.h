@@ -2,6 +2,8 @@
 #include <memory>
 #include <nitro/lane_at.h>
 #include <nitro/lane_const_at.h>
+#include <nitro/view.h>
+#include "const_view.h"
 
 namespace nitro {
 template <typename T, typename Alloc, typename Idx> class def_vector {
@@ -81,6 +83,12 @@ public:
   }
 
   template <size_t N> Idx num_lanes() const { return size() / N; }
+  
+  def_view<T, Idx> view() { return def_view<T, Idx>(data, _size); }
+
+  def_const_view<T, Idx> view() const {
+    return def_const_view<T, Idx>(data, _size);
+  }
 
   void clear() { destroy(); }
 
@@ -114,7 +122,7 @@ public:
     ++_size;
   }
 
-  template <typename... Args> T& emplace_back(Args &&...args) {
+  template <typename... Args> T &emplace_back(Args &&...args) {
     if (_size + 1 > _capacity)
       reserve(2 * (_size + 1) + 8);
 
