@@ -1,17 +1,16 @@
 #pragma once
+#include "const_view.h"
 #include <memory>
 #include <nitro/lane_at.h>
 #include <nitro/lane_const_at.h>
 #include <nitro/view.h>
-#include "const_view.h"
 
 namespace nitro {
 template <typename T, typename Alloc, typename Idx> class def_vector {
 public:
-  def_vector() : def_vector(Alloc()){};
+  def_vector() = default;
 
-  explicit def_vector(Alloc alloc)
-      : data{nullptr}, _size{0}, _capacity{0}, alloc{alloc} {};
+  explicit def_vector(Alloc alloc) : alloc{alloc} {};
 
   explicit def_vector(Idx n, T const &init = T(), Alloc alloc = Alloc()) {
     this->alloc = alloc;
@@ -24,8 +23,10 @@ public:
 
   def_vector(def_vector const &other) {
     alloc = other.alloc;
-    data = alloc.allocate(other._size);
-    std::uninitialized_copy_n(other.data, other._size, data);
+    if (other._size > 0) {
+      data = alloc.allocate(other._size);
+      std::uninitialized_copy_n(other.data, other._size, data);
+    }
     _size = _capacity = other._size;
   }
 
@@ -33,8 +34,10 @@ public:
     if (&*this != &other) {
       destroy();
       alloc = other.alloc;
-      data = alloc.allocate(other._size);
-      std::uninitialized_copy_n(other.data, other._size, data);
+      if (other._size > 0) {
+        data = alloc.allocate(other._size);
+        std::uninitialized_copy_n(other.data, other._size, data);
+      }
       _size = _capacity = other._size;
     }
     return *this;
@@ -83,7 +86,7 @@ public:
   }
 
   template <size_t N> Idx num_lanes() const { return size() / N; }
-  
+
   def_view<T, Idx> view() { return def_view<T, Idx>(data, _size); }
 
   def_const_view<T, Idx> view() const {
@@ -97,9 +100,11 @@ public:
       return;
 
     auto new_data = alloc.allocate(new_capacity);
-    std::uninitialized_move_n(data, _size, new_data);
-    std::destroy_n(data, _size);
-    alloc.deallocate(data, _capacity);
+    if (data) {
+      std::uninitialized_move_n(data, _size, new_data);
+      std::destroy_n(data, _size);
+      alloc.deallocate(data, _capacity);
+    }
     data = new_data;
     _capacity = new_capacity;
   }
@@ -107,7 +112,7 @@ public:
   void resize(Idx new_size, T const &init = T()) {
     if (new_size < _size) {
       std::destroy_n(data + new_size, _size - new_size);
-    } else {
+    } else if (new_size > _size) {
       reserve(new_size);
       std::uninitialized_fill_n(data + _size, new_size - _size, init);
     }
@@ -116,14 +121,14 @@ public:
 
   void push_back(T const &value) {
     if (_size + 1 > _capacity)
-      reserve(2 * (_size + 1) + 8);
+      reserve(2 * _size + 8);
 
     std::uninitialized_copy_n(&value, 1, data + _size);
     ++_size;
   }
 
   template <typename... Args> T &emplace_back(Args &&...args) {
-    if (_size + 1 > _capacity)
+    if (_size >= _capacity)
       reserve(2 * (_size + 1) + 8);
 
     ::new (data + _size) T(std::forward<Args>(args)...);
@@ -135,13 +140,14 @@ private:
     if (data) {
       std::destroy_n(data, _size);
       alloc.deallocate(data, _capacity);
+      data = nullptr;
     }
     _size = _capacity = 0;
   }
 
-  T *data;
-  Idx _size, _capacity;
-  Alloc alloc;
+  T *data = nullptr;
+  Idx _size = 0, _capacity = 0;
+  Alloc alloc = Alloc();
 };
 
 } // namespace nitro
