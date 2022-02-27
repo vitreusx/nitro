@@ -1,4 +1,5 @@
 #pragma once
+#include "config.h"
 
 #define NARG(...) __NARG_I_(__VA_ARGS__, __RSEQ_N())
 #define __NARG_I_(...) __ARG_N(__VA_ARGS__)
@@ -21,8 +22,12 @@
 #define VFUNC(func, ...) _VFUNC(func, NARG(__VA_ARGS__))(__VA_ARGS__)
 
 #define EXPR_FIELD(name)                                                       \
-  decltype(auto) name() { return static_cast<E &>(*this).name(); }             \
-  decltype(auto) name() const { return static_cast<E const &>(*this).name(); }
+  decltype(auto)  name() {                                         \
+    return static_cast<E &>(*this).name();                                     \
+  }                                                                            \
+  decltype(auto)  name() const {                                   \
+    return static_cast<E const &>(*this).name();                               \
+  }
 
 #define EXPR_FIELDS(...) VFUNC(EXPR_FIELDS_, __VA_ARGS__)
 
@@ -92,16 +97,22 @@
     GET_BODY_IX_8(I0 + 1, __VA_ARGS__)
 
 #define EXPR_GETS(...)                                                         \
-  template <size_t I> decltype(auto) get() { GET_BODY(__VA_ARGS__) }           \
-  template <size_t I> decltype(auto) get() const { GET_BODY(__VA_ARGS__) }
+  template <size_t I>  decltype(auto) get() {                      \
+    GET_BODY(__VA_ARGS__)                                                      \
+  }                                                                            \
+  template <size_t I>  decltype(auto) get() const {                \
+    GET_BODY(__VA_ARGS__)                                                      \
+  }
 
 #define EXPR_BODY(...)                                                         \
   EXPR_FIELDS(__VA_ARGS__)                                                     \
   EXPR_GETS(__VA_ARGS__)
 
 #define AUTO_EXPR_FIELD(I, name)                                               \
-  decltype(auto) name() { return static_cast<E &>(*this).template get<I>(); }  \
-  decltype(auto) name() const {                                                \
+   decltype(auto) name() {                                         \
+    return static_cast<E &>(*this).template get<I>();                          \
+  }                                                                            \
+   decltype(auto) name() const {                                   \
     return static_cast<E const &>(*this).template get<I>();                    \
   }
 
@@ -132,10 +143,10 @@
   AUTO_EXPR_FIELDS_IX_8(I + 1, __VA_ARGS__)
 
 #define AUTO_EXPR_GETS()                                                       \
-  template <size_t I> decltype(auto) get() {                                   \
+  template <size_t I>  decltype(auto) get() {                      \
     return static_cast<E &>(*this).template get<I>();                          \
   }                                                                            \
-  template <size_t I> decltype(auto) get() const {                             \
+  template <size_t I>  decltype(auto) get() const {                \
     return static_cast<E const &>(*this).template get<I>();                    \
   }
 

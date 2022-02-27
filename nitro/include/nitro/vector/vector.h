@@ -1,7 +1,7 @@
 #pragma once
-#include <nitro/def_vector.h>
-#include <nitro/par_vector.h>
-#include <nitro/vector_decl.h>
+#include "vector_decl.h"
+#include "def_vector.h"
+#include "par_vector.h"
 
 namespace nitro {
 template <typename T, typename Alloc, typename Idx, bool Indexed>

@@ -1,7 +1,7 @@
 #pragma once
-#include "const_at.h"
-#include "def_view.h"
-#include "lane_const_at.h"
+#include "../const_at/const_at.h"
+#include "../lane_const_at/lane_const_at.h"
+#include "../view/def_view.h"
 
 namespace nitro {
 template <typename T, typename Idx> class def_const_view {

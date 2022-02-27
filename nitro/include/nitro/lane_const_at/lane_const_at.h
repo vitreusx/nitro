@@ -1,6 +1,6 @@
 #pragma once
-#include <nitro/indexed.h>
-#include <nitro/lane.h>
+#include "../indexed.h"
+#include "../lane/lane.h"
 
 namespace nitro {
 

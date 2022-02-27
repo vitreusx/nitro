@@ -1,7 +1,7 @@
 #pragma once
-#include <nitro/expr.h>
-#include <nitro/indexed.h>
-#include <nitro/type_list.h>
+#include "expr.h"
+#include "indexed.h"
+#include "type_list.h"
 #include <utility>
 
 namespace nitro {
@@ -16,20 +16,21 @@ public:
 template <typename Head, typename... Tail>
 class tuple<Head, Tail...> : public ind_expr<tuple<Head, Tail...>> {
 public:
-  tuple(Head const &head, Tail const &...tail) : head{head}, tail{tail...} {}
+   tuple(Head const &head, Tail const &...tail)
+      : head{head}, tail{tail...} {}
 
   template <typename E>
-  tuple(ind_expr<E> const &e)
-      : tuple(e, std::make_index_sequence<1+sizeof...(Tail)>{}) {}
+   tuple(ind_expr<E> const &e)
+      : tuple(e, std::make_index_sequence<1 + sizeof...(Tail)>{}) {}
 
-  template <size_t I> decltype(auto) get() {
+  template <size_t I>  decltype(auto) get() {
     if constexpr (I == 0)
       return (head);
     else
       return tail.template get<I - 1>();
   }
 
-  template <size_t I> decltype(auto) get() const {
+  template <size_t I>  decltype(auto) get() const {
     if constexpr (I == 0)
       return (head);
     else
@@ -46,7 +47,7 @@ private:
   tuple<Tail...> tail;
 
   template <typename E, size_t... ISeq>
-  tuple(ind_expr<E> const &e, std::index_sequence<ISeq...>)
+   tuple(ind_expr<E> const &e, std::index_sequence<ISeq...>)
       : tuple{e.template get<ISeq>()...} {}
 };
 
@@ -64,13 +65,16 @@ struct is_indexed_impl<tuple<Types...>> : std::true_type {};
 
 template <typename... Types> class tuple_wrapper {
 public:
-  tuple_wrapper(Types const &...values) : data{values...} {}
+   tuple_wrapper(Types const &...values) : data{values...} {}
 
-  template <typename E> tuple_wrapper(ind_expr<E> const &e) : data{e} {}
+  template <typename E>
+   tuple_wrapper(ind_expr<E> const &e) : data{e} {}
 
-  template <size_t I> decltype(auto) get() { return data.template get<I>(); }
+  template <size_t I>  decltype(auto) get() {
+    return data.template get<I>();
+  }
 
-  template <size_t I> decltype(auto) get() const {
+  template <size_t I>  decltype(auto) get() const {
     return data.template get<I>();
   }
 

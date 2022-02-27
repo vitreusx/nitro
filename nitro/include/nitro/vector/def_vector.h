@@ -1,9 +1,9 @@
 #pragma once
-#include "const_view.h"
+#include "../const_view/const_view.h"
+#include "../lane_at/lane_at.h"
+#include "../lane_const_at/lane_const_at.h"
+#include "../view/view.h"
 #include <memory>
-#include <nitro/lane_at.h>
-#include <nitro/lane_const_at.h>
-#include <nitro/view.h>
 
 namespace nitro {
 template <typename T, typename Alloc, typename Idx> class def_vector {
@@ -63,29 +63,29 @@ public:
     return *this;
   }
 
-  Idx size() const { return _size; }
+   Idx size() const { return _size; }
 
   Idx capacity() const { return _size; }
 
-  T &operator[](Idx idx) { return data[idx]; }
+   T &operator[](Idx idx) { return data[idx]; }
 
-  T const &operator[](Idx idx) const { return data[idx]; }
+   T const &operator[](Idx idx) const { return data[idx]; }
 
-  T &at(Idx idx) { return (*this)[idx]; }
+   T &at(Idx idx) { return (*this)[idx]; }
 
-  T const &at(Idx idx) const { return (*this)[idx]; }
+   T const &at(Idx idx) const { return (*this)[idx]; }
 
-  template <size_t N> def_lane_at<T, N> lane_at(Idx idx) {
+  template <size_t N>  def_lane_at<T, N> lane_at(Idx idx) {
     return def_lane_at<T, N>(data[N * idx]);
   }
 
-  template <size_t N> lane<T, N> lane_at(Idx idx) const {
+  template <size_t N>  lane<T, N> lane_at(Idx idx) const {
     lane<T, N> res;
     res.load(data + N * idx);
     return res;
   }
 
-  template <size_t N> Idx num_lanes() const { return size() / N; }
+  template <size_t N>  Idx num_lanes() const { return size() / N; }
 
   def_view<T, Idx> view() { return def_view<T, Idx>(data, _size); }
 
@@ -93,7 +93,12 @@ public:
     return def_const_view<T, Idx>(data, _size);
   }
 
-  void clear() { destroy(); }
+  void clear() {
+    if (data) {
+      std::destroy_n(data, _size);
+    }
+    _size = 0;
+  }
 
   void reserve(Idx new_capacity) {
     if (new_capacity <= _capacity)

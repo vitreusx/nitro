@@ -1,5 +1,5 @@
 #pragma once
-#include "vector.h"
+#include "vector/vector.h"
 
 namespace nitro {
 template <typename T, typename DataAlloc = def_alloc<T>,
@@ -19,27 +19,27 @@ public:
                MarkAlloc mark_alloc = MarkAlloc())
       : data{n, e, data_alloc}, mark{n, false, mark_alloc} {};
 
-  Idx size() const { return data.size(); }
+   Idx size() const { return data.size(); }
 
   Idx capacity() const { return data.capacity(); }
 
-  decltype(auto) operator[](Idx idx) { return data[idx]; }
+   decltype(auto) operator[](Idx idx) { return data[idx]; }
 
-  decltype(auto) operator[](Idx idx) const { return data[idx]; }
+   decltype(auto) operator[](Idx idx) const { return data[idx]; }
 
-  decltype(auto) at(Idx idx) { return data.at(idx); }
+   decltype(auto) at(Idx idx) { return data.at(idx); }
 
-  decltype(auto) at(Idx idx) const { return data.at(idx); }
+   decltype(auto) at(Idx idx) const { return data.at(idx); }
 
-  template <size_t N> decltype(auto) lane_at(Idx idx) {
+  template <size_t N>  decltype(auto) lane_at(Idx idx) {
     return data.template lane_at<N>(idx);
   }
 
-  template <size_t N> decltype(auto) lane_at(Idx idx) const {
+  template <size_t N>  decltype(auto) lane_at(Idx idx) const {
     return data.template lane_at<N>(idx);
   }
 
-  template <size_t N> Idx num_lanes() const {
+  template <size_t N>  Idx num_lanes() const {
     return data.template num_lanes<N>();
   }
 
@@ -63,18 +63,14 @@ public:
     mark.push_back(false);
   }
 
-  template<typename... Args> decltype(auto) emplace_back(Args&&... args) {
+  template <typename... Args> decltype(auto) emplace_back(Args &&...args) {
     mark.push_back(false);
     return data.template emplace_back(std::forward<Args>(args)...);
   }
 
-  void remove(Idx idx) {
-    mark[idx] = true;
-  }
+  void remove(Idx idx) { mark[idx] = true; }
 
-  bool is_vacant(Idx idx) const {
-    return mark[idx];
-  }
+  bool is_vacant(Idx idx) const { return mark[idx]; }
 
 private:
   vector<T> data;

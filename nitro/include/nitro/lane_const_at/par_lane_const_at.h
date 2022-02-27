@@ -1,7 +1,7 @@
 #pragma once
-#include <nitro/expr.h>
-#include <nitro/lane_const_at.h>
-#include <nitro/tuple.h>
+#include "../expr.h"
+#include "../lane_const_at/lane_const_at.h"
+#include "../tuple.h"
 
 namespace nitro {
 template <typename T, size_t N, size_t... ISeq>
@@ -15,10 +15,10 @@ public:
   using Base::Base;
   using Base::get;
 
-  par_lane_const_at_expr(par_lane_const_at_expr const &other)
+   par_lane_const_at_expr(par_lane_const_at_expr const &other)
       : Base(static_cast<Base const &>(other)) {}
 
-  par_lane_const_at_expr(par_lane_const_at_expr &&other) noexcept
+   par_lane_const_at_expr(par_lane_const_at_expr &&other) noexcept
       : Base(static_cast<Base &&>(other)) {}
 
   par_lane_const_at_expr &

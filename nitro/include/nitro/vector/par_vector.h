@@ -1,13 +1,13 @@
 #pragma once
-#include "par_const_view.h"
-#include "par_view.h"
+#include "../at/par_at.h"
+#include "../const_at/par_const_at.h"
+#include "../const_view/par_const_view.h"
+#include "../expr.h"
+#include "../lane_at/par_lane_at.h"
+#include "../lane_const_at/par_lane_const_at.h"
+#include "../view/par_view.h"
+#include "vector_decl.h"
 #include <cstddef>
-#include <nitro/expr.h>
-#include <nitro/par_at.h>
-#include <nitro/par_const_at.h>
-#include <nitro/par_lane_at.h>
-#include <nitro/par_lane_const_at.h>
-#include <nitro/vector_decl.h>
 
 namespace nitro {
 template <typename Types, typename Allocs, typename Idx, size_t... ISeq>
@@ -35,27 +35,28 @@ public:
   Idx size() const { return slices.template get<0>().size(); }
   Idx capacity() const { return slices.template get<0>().capacity(); }
 
-  at_expr<Types> operator[](Idx idx) {
+   at_expr<Types> operator[](Idx idx) {
     return {slices.template get<ISeq>()[idx]...};
   }
 
-  const_at_expr<Types> operator[](Idx idx) const {
+   const_at_expr<Types> operator[](Idx idx) const {
     return {slices.template get<ISeq>()[idx]...};
   }
 
-  at_expr<Types> at(Idx idx) { return (*this)[idx]; }
+   at_expr<Types> at(Idx idx) { return (*this)[idx]; }
 
-  const_at_expr<Types> at(Idx idx) const { return (*this)[idx]; }
+   const_at_expr<Types> at(Idx idx) const { return (*this)[idx]; }
 
-  template <size_t N> lane_at_expr<Types, N> lane_at(Idx idx) {
+  template <size_t N>  lane_at_expr<Types, N> lane_at(Idx idx) {
     return {slices.template get<ISeq>().template lane_at<N>(idx)...};
   }
 
-  template <size_t N> lane_const_at_expr<Types, N> lane_at(Idx idx) const {
+  template <size_t N>
+   lane_const_at_expr<Types, N> lane_at(Idx idx) const {
     return {slices.template get<ISeq>().template lane_at<N>(idx)...};
   }
 
-  template <size_t N> Idx num_lanes() const { return size() / N; }
+  template <size_t N>  Idx num_lanes() const { return size() / N; }
 
   par_view<Types, Idx, ISeq...> view() {
     return par_view<Types, Idx, ISeq...>(slices.template get<ISeq>().view()...);

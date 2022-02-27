@@ -1,8 +1,8 @@
 #pragma once
+#include "../expr.h"
+#include "../tuple.h"
+#include "at.h"
 #include <cstddef>
-#include <nitro/at.h>
-#include <nitro/expr.h>
-#include <nitro/tuple.h>
 #include <utility>
 
 namespace nitro {
@@ -17,37 +17,40 @@ public:
   using Base::Base;
   using Base::get;
 
-  par_at_expr(par_at_expr const &other)
+   par_at_expr(par_at_expr const &other)
       : Base(static_cast<Base const &>(other)) {}
 
-  par_at_expr(par_at_expr &&other) : Base(static_cast<Base &&>(other)) {}
+   par_at_expr(par_at_expr &&other)
+      : Base(static_cast<Base &&>(other)) {}
 
-  par_at_expr &operator=(par_at_expr const &other) {
+   par_at_expr &operator=(par_at_expr const &other) {
     (..., assign<ISeq>(other));
     return *this;
   }
 
-  template <typename E> par_at_expr &operator=(ind_expr<E> const &e) {
+  template <typename E>
+   par_at_expr &operator=(ind_expr<E> const &e) {
     (..., assign<ISeq>(static_cast<E const &>(e)));
     return *this;
   }
 
-  par_at_expr &operator=(par_at_expr &&other) noexcept {
+   par_at_expr &operator=(par_at_expr &&other) noexcept {
     (..., move<ISeq>(other));
     return *this;
   }
 
-  template <typename E> par_at_expr &operator=(ind_expr<E> &&e) noexcept {
+  template <typename E>
+   par_at_expr &operator=(ind_expr<E> &&e) noexcept {
     (..., move<ISeq>(static_cast<E &&>(e)));
     return *this;
   }
 
 private:
-  template <size_t I, typename E> void assign(E const &e) {
+  template <size_t I, typename E>  void assign(E const &e) {
     this->template get<I>() = e.template get<I>();
   }
 
-  template <size_t I, typename E> void move(E &&e) noexcept {
+  template <size_t I, typename E>  void move(E &&e) noexcept {
     this->template get<I>() = std::move(e.template get<I>());
   }
 };
@@ -60,4 +63,4 @@ private:
 public:
   using type = decltype(aux(std::make_index_sequence<T::num_types>{}));
 };
-}
+} // namespace nitro

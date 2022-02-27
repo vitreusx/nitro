@@ -1,7 +1,7 @@
 #pragma once
+#include "../indexed.h"
+#include "../tuple.h"
 #include <memory>
-#include <nitro/indexed.h>
-#include <nitro/tuple.h>
 
 namespace nitro {
 template <typename T> struct def_alloc_impl;
@@ -18,7 +18,7 @@ public:
   using Base = tuple<slice<ISeq>...>;
   using Base::Base;
 
-  par_alloc() : Base{slice<ISeq>()...} {};
+   par_alloc() : Base{slice<ISeq>()...} {};
 };
 
 template <typename T, bool Indexed> struct def_alloc_impl_aux;
@@ -39,4 +39,4 @@ template <typename T> struct def_alloc_impl_aux<T, false> {
   using type = std::allocator<T>;
 };
 
-}
+} // namespace nitro
