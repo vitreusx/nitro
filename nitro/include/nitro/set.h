@@ -12,12 +12,12 @@ public:
 
   explicit set(Idx n, T const &init = T(), DataAlloc data_alloc = DataAlloc(),
                MarkAlloc mark_alloc = MarkAlloc())
-      : data{n, init, data_alloc}, mark{n, false, mark_alloc} {};
+      : data{n, init, data_alloc}, mark{n, false, mark_alloc} {}
 
   template <typename E>
   explicit set(Idx n, ind_expr<E> const &e, DataAlloc data_alloc = DataAlloc(),
                MarkAlloc mark_alloc = MarkAlloc())
-      : data{n, e, data_alloc}, mark{n, false, mark_alloc} {};
+      : data{n, e, data_alloc}, mark{n, false, mark_alloc} {}
 
    Idx size() const { return data.size(); }
 

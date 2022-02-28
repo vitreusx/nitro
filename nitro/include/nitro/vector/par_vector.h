@@ -25,12 +25,12 @@ public:
   explicit par_vector(Idx n, Types const &init = Types(),
                       Allocs allocs = Allocs())
       : slices{slice<ISeq>(n, init.template get<ISeq>(),
-                           allocs.template get<ISeq>())...} {};
+                           allocs.template get<ISeq>())...} {}
 
   template <typename E>
   explicit par_vector(Idx n, ind_expr<E> const &e, Allocs allocs = Allocs())
       : slices{slice<ISeq>(n, e.template get<ISeq>(),
-                           allocs.template get<ISeq>())...} {};
+                           allocs.template get<ISeq>())...} {}
 
   Idx size() const { return slices.template get<0>().size(); }
   Idx capacity() const { return slices.template get<0>().capacity(); }
