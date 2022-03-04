@@ -35,27 +35,21 @@ public:
   Idx size() const { return slices.template get<0>().size(); }
   Idx capacity() const { return slices.template get<0>().capacity(); }
 
-  at_expr<Types> operator[](Idx idx) {
-    return {slices.template get<ISeq>()[idx]...};
+  at_expr<Types> operator[](Idx idx) { return view()[idx]; }
+
+  const_at_expr<Types> operator[](Idx idx) const { return view()[idx]; }
+
+  at_expr<Types> at(Idx idx) { return view().at(idx); }
+
+  const_at_expr<Types> at(Idx idx) const { return view().at(idx); }
+
+  template <size_t N> def_lane_at<Types, N> lane_at(Idx idx) {
+    return view().lane_at(idx);
   }
 
-  const_at_expr<Types> operator[](Idx idx) const {
-    return {slices.template get<ISeq>()[idx]...};
+  template <size_t N> lane<Types, N> lane_at(Idx idx) const {
+    return view().lane_at(idx);
   }
-
-  at_expr<Types> at(Idx idx) { return (*this)[idx]; }
-
-  const_at_expr<Types> at(Idx idx) const { return (*this)[idx]; }
-
-  template <size_t N> lane_at_expr<Types, N> lane_at(Idx idx) {
-    return {slices.template get<ISeq>().template lane_at<N>(idx)...};
-  }
-
-  template <size_t N> lane_const_at_expr<Types, N> lane_at(Idx idx) const {
-    return {slices.template get<ISeq>().template lane_at<N>(idx)...};
-  }
-
-  template <size_t N> Idx num_lanes() const { return size() / N; }
 
   view<Types, Idx> view() {
     return par_view<Types, Idx, ISeq...>(slices.template get<ISeq>().view()...);
@@ -86,6 +80,14 @@ public:
     push_back(Types(args...));
     return at(size() - 1);
   }
+
+  iterator<Types> begin() { return view().begin(); }
+
+  iterator<Types> begin() const { return view().begin(); }
+
+  iterator<Types> end() { return view().end(); }
+
+  iterator<Types> end() const { return view().end(); }
 
 private:
   tuple<slice<ISeq>...> slices;

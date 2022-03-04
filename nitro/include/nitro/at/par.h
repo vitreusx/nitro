@@ -45,6 +45,11 @@ public:
     return *this;
   }
 
+  friend void swap(par_at_expr<Types, ISeq...> const& u, par_at_expr<Types, ISeq...> const& v) {
+    using std::swap;
+    (..., swap(u.template get<ISeq>(), v.template get<ISeq>()));
+  }
+
 private:
   template <size_t I, typename E>  void assign(E const &e) {
     this->template get<I>() = e.template get<I>();

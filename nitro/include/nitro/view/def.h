@@ -1,6 +1,8 @@
 #pragma once
 #include "../at.h"
+#include "../const_iterator.h"
 #include "../const_view.h"
+#include "../iterator.h"
 #include "../lane_at.h"
 #include "nitro/at/decl.h"
 
@@ -23,6 +25,14 @@ public:
   Idx size() const { return n; }
 
   operator const_view<T, Idx>() const { return const_view<T, Idx>(data, n); }
+
+  iterator<T> begin() { return def_iterator<T>(data); }
+
+  const_iterator<T> begin() const { return def_const_iterator<T>(data); }
+
+  iterator<T> end() { return def_iterator<T>(data + n); }
+
+  const_iterator<T> end() const { return def_const_iterator<T>(data + n); }
 
 private:
   T *data;

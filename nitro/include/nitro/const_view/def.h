@@ -1,6 +1,7 @@
 #pragma once
 #include "../const_at.h"
 #include "../lane_const_at.h"
+#include "../const_iterator.h"
 #include "decl.h"
 
 namespace nitro {
@@ -20,6 +21,14 @@ public:
   template <size_t N> Idx num_lanes() const { return size() / N; }
 
   Idx size() const { return n; }
+
+  const_iterator<T> begin() const {
+    return def_const_iterator<T>(data);
+  }
+
+  const_iterator<T> end() const {
+    return def_const_iterator<T>(data + n);
+  }
 
 protected:
   T const *data;

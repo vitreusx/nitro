@@ -69,25 +69,23 @@ public:
 
   Idx capacity() const { return _size; }
 
-  at_expr<T> operator[](Idx idx) { return data[idx]; }
+  at_expr<T> operator[](Idx idx) { return view()[idx]; }
 
-  const_at_expr<T> operator[](Idx idx) const { return data[idx]; }
+  const_at_expr<T> operator[](Idx idx) const { return view()[idx]; }
 
-  at_expr<T> at(Idx idx) { return (*this)[idx]; }
+  at_expr<T> at(Idx idx) { return view().at(idx); }
 
-  const_at_expr<T> at(Idx idx) const { return (*this)[idx]; }
+  const_at_expr<T> at(Idx idx) const { return view().at(idx); }
 
   template <size_t N> def_lane_at<T, N> lane_at(Idx idx) {
-    return def_lane_at<T, N>(data[N * idx]);
+    return view().lane_at(idx);
   }
 
   template <size_t N> lane<T, N> lane_at(Idx idx) const {
-    lane<T, N> res;
-    res.load(data + N * idx);
-    return res;
+    return view().lane_at(idx);
   }
 
-  template <size_t N> Idx num_lanes() const { return size() / N; }
+  template <size_t N> Idx num_lanes() const { return view().num_lanes(); }
 
   def_view<T, Idx> view() { return def_view<T, Idx>(data, _size); }
 
@@ -141,6 +139,14 @@ public:
     ::new (data + _size) T(std::forward<Args>(args)...);
     return data[_size++];
   }
+
+  iterator<T> begin() { return view().begin(); }
+
+  iterator<T> begin() const { return view().begin(); }
+
+  iterator<T> end() { return view().end(); }
+
+  iterator<T> end() const { return view().end(); }
 
 private:
   void destroy() {

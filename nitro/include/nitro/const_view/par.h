@@ -1,10 +1,11 @@
 #pragma once
+#include "../at.h"
 #include "../const_at.h"
+#include "../const_iterator.h"
 #include "../lane_at.h"
 #include "../lane_const_at.h"
 #include "../tuple.h"
 #include "decl.h"
-#include "nitro/at/decl.h"
 #include <cstddef>
 
 namespace nitro {
@@ -30,7 +31,27 @@ public:
 
   Idx size() const { return slices.template get<0>().size(); }
 
+  const_iterator<Types> begin() const {
+    return par_const_iterator<Types, ISeq...>(
+        slices.template get<ISeq>().begin()...);
+  }
+
+  const_iterator<Types> end() const {
+    return par_const_iterator<Types, ISeq...>(
+        slices.template get<ISeq>().begin()...);
+  }
+
 protected:
   tuple<slice<ISeq>...> slices;
 };
 } // namespace nitro
+
+namespace std {
+template <typename Types, size_t... ISeq>
+struct iterator_traits<nitro::par_const_iterator<Types, ISeq...>> {
+  using value_type = Types const;
+  using difference_type = std::ptrdiff_t;
+  using reference = nitro::par_const_at_expr<Types, ISeq...>;
+  using iterator_category = std::random_access_iterator_tag;
+};
+} // namespace std

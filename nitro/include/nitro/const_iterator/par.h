@@ -17,13 +17,13 @@ public:
     return {*slices.template get<ISeq>()...};
   }
 
-  par_const_iterator operator++() const {
-    return par_const_iterator(slices.template get<ISeq>()++...);
-  }
-
-  par_const_iterator &operator++(int) {
+  par_const_iterator &operator++() {
     (..., ++slices.template get<ISeq>());
     return *this;
+  }
+
+  par_const_iterator operator++(int) {
+    return par_const_iterator(slices.template get<ISeq>()++...);
   }
 
   template <typename Idx>
@@ -36,13 +36,13 @@ public:
     return *this;
   }
 
-  par_const_iterator operator--() const {
-    return par_const_iterator(slices.template get<ISeq>()--...);
-  }
-
-  par_const_iterator &operator--(int) {
+  par_const_iterator &operator--() {
     (..., --slices.template get<ISeq>());
     return *this;
+  }
+
+  par_const_iterator operator--(int) {
+    return par_const_iterator(slices.template get<ISeq>()--...);
   }
 
   template <typename Idx>

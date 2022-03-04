@@ -1,6 +1,8 @@
 #pragma once
 #include "../tuple.h"
 #include "decl.h"
+#include "../iterator.h"
+#include "../const_iterator.h"
 #include <cstddef>
 
 namespace nitro {
@@ -28,6 +30,22 @@ public:
 
   operator par_const_view<Types, Idx, ISeq...>() const {
     return par_const_view<Types, Idx, ISeq...>(slices.template get<ISeq>()...);
+  }
+
+  iterator<Types> begin() {
+    return par_iterator<Types, ISeq...>(slices.template get<ISeq>().begin()...);
+  }
+
+  const_iterator<Types> begin() const {
+    return par_const_iterator<Types, ISeq...>(slices.template get<ISeq>().begin()...);
+  }
+
+  iterator<Types> end() {
+    return par_iterator<Types, ISeq...>(slices.template get<ISeq>().end()...);
+  }
+
+  const_iterator<Types> end() const {
+    return par_const_iterator<Types, ISeq...>(slices.template get<ISeq>().end()...);
   }
 
 private:

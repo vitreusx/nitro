@@ -14,13 +14,13 @@ public:
 
   at_expr<Types> operator*() const { return {*slices.template get<ISeq>()...}; }
 
-  par_iterator operator++() const {
-    return par_iterator(slices.template get<ISeq>()++...);
-  }
-
-  par_iterator &operator++(int) {
+  par_iterator &operator++() {
     (..., ++slices.template get<ISeq>());
     return *this;
+  }
+
+  par_iterator operator++(int) {
+    return par_iterator(slices.template get<ISeq>()++...);
   }
 
   template <typename Idx> par_iterator operator+(Idx const &offset) const {
@@ -32,17 +32,21 @@ public:
     return *this;
   }
 
-  par_iterator operator--() const {
-    return par_iterator(slices.template get<ISeq>()--...);
-  }
-
-  par_iterator &operator--(int) {
+  par_iterator &operator--() {
     (..., --slices.template get<ISeq>());
     return *this;
   }
 
+  par_iterator operator--(int) {
+    return par_iterator(slices.template get<ISeq>()--...);
+  }
+
   template <typename Idx> par_iterator operator-(Idx const &offset) const {
     return par_iterator(slices.template get<ISeq>() - offset...);
+  }
+
+  std::ptrdiff_t operator-(par_iterator<Types, ISeq...> const &other) {
+    return slices.template get<0>() - other.slices.template get<0>();
   }
 
   template <typename Idx> par_iterator &operator-=(Idx const &offset) {
@@ -86,3 +90,13 @@ private:
   tuple<slice<ISeq>...> slices;
 };
 } // namespace nitro
+
+namespace std {
+template <typename Types, size_t... ISeq>
+struct iterator_traits<nitro::par_iterator<Types, ISeq...>> {
+  using value_type = Types;
+  using difference_type = std::ptrdiff_t;
+  using reference = nitro::par_at_expr<Types, ISeq...>;
+  using iterator_category = std::random_access_iterator_tag;
+};
+} // namespace std
