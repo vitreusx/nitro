@@ -72,6 +72,10 @@ public:
     (..., slices.template get<ISeq>().resize(new_size, e.template get<ISeq>()));
   }
 
+  void shrink(Idx new_size) {
+    (..., slices.template get<ISeq>().shrink(new_size));
+  }
+
   template <typename E> void push_back(ind_expr<E> const &e) {
     (..., slices.template get<ISeq>().push_back(e.template get<ISeq>()));
   }

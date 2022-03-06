@@ -30,6 +30,26 @@ public:
 
   void remove(Idx idx) { (*this)[idx].remove(); }
 
+  Idx num_items() const {
+    Idx res = 0;
+    for (Idx idx = 0; idx < this->size(); ++idx) {
+      if (this->at(idx).has_item())
+        ++res;
+    }
+    return res;
+  }
+
+  void compress() {
+    Idx slot_idx = 0, num_items = 0;
+    for (Idx cur_idx = 0; cur_idx < this->size(); ++cur_idx) {
+      if (this->at(cur_idx).has_item()) {
+        this->at(slot_idx++).item() = this->at(cur_idx).item();
+        ++num_items;
+      }
+    }
+    this->shrink(num_items);
+  }
+
 private:
   using Base::emplace_back;
   using Base::push_back;

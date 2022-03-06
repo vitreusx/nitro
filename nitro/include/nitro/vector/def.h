@@ -124,6 +124,13 @@ public:
     _size = new_size;
   }
 
+  void shrink(Idx new_size) {
+    if (new_size < _size) {
+      std::destroy_n(data + new_size, _size - new_size);
+      _size = new_size;
+    }
+  }
+
   void push_back(T const &value) {
     if (_size + 1 > _capacity)
       reserve(2 * _size + 8);
