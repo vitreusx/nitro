@@ -7,8 +7,7 @@ file(GLOB_RECURSE PublicSources CONFIGURE_DEPENDS
     include/*.hpp include/*.h include/*.inl)
 
 target_sources(nitro
-    PRIVATE ${PrivateSources}
-    PUBLIC ${PublicSources})
+    INTERFACE ${PrivateSources} ${PublicSources})
 
 target_compile_features(nitro
     INTERFACE cxx_std_17)
