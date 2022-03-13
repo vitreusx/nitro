@@ -87,11 +87,11 @@ public:
 
   iterator<Types> begin() { return view().begin(); }
 
-  iterator<Types> begin() const { return view().begin(); }
+  const_iterator<Types> begin() const { return view().begin(); }
 
   iterator<Types> end() { return view().end(); }
 
-  iterator<Types> end() const { return view().end(); }
+  const_iterator<Types> end() const { return view().end(); }
 
 private:
   tuple<slice<ISeq>...> slices;

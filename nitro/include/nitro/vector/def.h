@@ -149,11 +149,11 @@ public:
 
   iterator<T> begin() { return view().begin(); }
 
-  iterator<T> begin() const { return view().begin(); }
+  const_iterator<T> begin() const { return view().begin(); }
 
   iterator<T> end() { return view().end(); }
 
-  iterator<T> end() const { return view().end(); }
+  const_iterator<T> end() const { return view().end(); }
 
 private:
   void destroy() {

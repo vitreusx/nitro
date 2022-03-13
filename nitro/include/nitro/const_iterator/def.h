@@ -73,7 +73,7 @@ public:
   }
 
 private:
-  T *const ptr;
+  T const* ptr;
 };
 } // namespace nitro
 
