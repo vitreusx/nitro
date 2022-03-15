@@ -10,26 +10,32 @@
 namespace nitro {
 template <typename T, typename Alloc, typename Idx> class def_vector {
 public:
-  def_vector() = default;
+  def_vector(): data{nullptr}, _size{0}, _capacity{0}, alloc{Alloc()} {}
 
-  explicit def_vector(Alloc alloc) : alloc{alloc} {};
+  explicit def_vector(Alloc alloc) : data{nullptr}, _size{0}, _capacity{0}, alloc{alloc} {};
 
   explicit def_vector(Idx n, T const &init = T(), Alloc alloc = Alloc()) {
     this->alloc = alloc;
-    data = this->alloc.allocate(n);
-    std::uninitialized_fill_n(data, n, init);
+    data = nullptr;
     _size = _capacity = n;
+
+    if (n > 0) {
+      data = this->alloc.allocate(n);
+      std::uninitialized_fill_n(data, n, init);
+    }
   }
 
   ~def_vector() { destroy(); }
 
   def_vector(def_vector const &other) {
     alloc = other.alloc;
+    data = nullptr;
+    _size = _capacity = other._size;
+
     if (other._size > 0) {
       data = alloc.allocate(other._size);
       std::uninitialized_copy_n(other.data, other._size, data);
     }
-    _size = _capacity = other._size;
   }
 
   def_vector &operator=(def_vector const &other) {
@@ -49,6 +55,7 @@ public:
     data = other.data;
     _size = other._size;
     _capacity = other._capacity;
+
     other.data = nullptr;
     other._size = other._capacity = 0;
   }
@@ -94,9 +101,9 @@ public:
   }
 
   void clear() {
-    if (data) {
+    if (data && _size > 0)
       std::destroy_n(data, _size);
-    }
+
     _size = 0;
   }
 
@@ -106,8 +113,10 @@ public:
 
     auto new_data = alloc.allocate(new_capacity);
     if (data) {
-      std::uninitialized_move_n(data, _size, new_data);
-      std::destroy_n(data, _size);
+      if (_size > 0) {
+        std::uninitialized_move_n(data, _size, new_data);
+        std::destroy_n(data, _size);
+      }
       alloc.deallocate(data, _capacity);
     }
     data = new_data;
@@ -158,16 +167,17 @@ public:
 private:
   void destroy() {
     if (data) {
-      std::destroy_n(data, _size);
+      if (_size > 0)
+        std::destroy_n(data, _size);
       alloc.deallocate(data, _capacity);
       data = nullptr;
     }
     _size = _capacity = 0;
   }
 
-  T *data = nullptr;
-  Idx _size = 0, _capacity = 0;
-  Alloc alloc = Alloc();
+  T *data;
+  Idx _size, _capacity;
+  Alloc alloc;
 };
 
 } // namespace nitro
