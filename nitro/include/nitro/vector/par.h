@@ -35,29 +35,30 @@ public:
   Idx size() const { return slices.template get<0>().size(); }
   Idx capacity() const { return slices.template get<0>().capacity(); }
 
-  at_expr<Types> operator[](Idx idx) { return view()[idx]; }
+  at_expr<Types> operator[](Idx idx) { return get_view()[idx]; }
 
-  const_at_expr<Types> operator[](Idx idx) const { return view()[idx]; }
+  const_at_expr<Types> operator[](Idx idx) const { return get_view()[idx]; }
 
-  at_expr<Types> at(Idx idx) { return view().at(idx); }
+  at_expr<Types> at(Idx idx) { return get_view().at(idx); }
 
-  const_at_expr<Types> at(Idx idx) const { return view().at(idx); }
+  const_at_expr<Types> at(Idx idx) const { return get_view().at(idx); }
 
   template <size_t N> def_lane_at<Types, N> lane_at(Idx idx) {
-    return view().lane_at(idx);
+    return get_view().lane_at(idx);
   }
 
   template <size_t N> lane<Types, N> lane_at(Idx idx) const {
-    return view().lane_at(idx);
+    return get_view().lane_at(idx);
   }
 
-  view<Types, Idx> view() {
-    return par_view<Types, Idx, ISeq...>(slices.template get<ISeq>().view()...);
+  view<Types, Idx> get_view() {
+    return par_view<Types, Idx, ISeq...>(
+        slices.template get<ISeq>().get_view()...);
   }
 
-  const_view<Types, Idx> view() const {
+  const_view<Types, Idx> get_view() const {
     return par_const_view<Types, Idx, ISeq...>(
-        slices.template get<ISeq>().view()...);
+        slices.template get<ISeq>().get_view()...);
   }
 
   void clear() { (..., slices.template get<ISeq>().clear()); }
@@ -85,13 +86,13 @@ public:
     return at(size() - 1);
   }
 
-  iterator<Types> begin() { return view().begin(); }
+  iterator<Types> begin() { return get_view().begin(); }
 
-  const_iterator<Types> begin() const { return view().begin(); }
+  const_iterator<Types> begin() const { return get_view().begin(); }
 
-  iterator<Types> end() { return view().end(); }
+  iterator<Types> end() { return get_view().end(); }
 
-  const_iterator<Types> end() const { return view().end(); }
+  const_iterator<Types> end() const { return get_view().end(); }
 
 private:
   tuple<slice<ISeq>...> slices;

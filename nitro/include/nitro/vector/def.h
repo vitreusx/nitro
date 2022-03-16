@@ -76,27 +76,27 @@ public:
 
   Idx capacity() const { return _size; }
 
-  at_expr<T> operator[](Idx idx) { return view()[idx]; }
+  at_expr<T> operator[](Idx idx) { return get_view()[idx]; }
 
-  const_at_expr<T> operator[](Idx idx) const { return view()[idx]; }
+  const_at_expr<T> operator[](Idx idx) const { return get_view()[idx]; }
 
-  at_expr<T> at(Idx idx) { return view().at(idx); }
+  at_expr<T> at(Idx idx) { return get_view().at(idx); }
 
-  const_at_expr<T> at(Idx idx) const { return view().at(idx); }
+  const_at_expr<T> at(Idx idx) const { return get_view().at(idx); }
 
   template <size_t N> def_lane_at<T, N> lane_at(Idx idx) {
-    return view().lane_at(idx);
+    return get_view().lane_at(idx);
   }
 
   template <size_t N> lane<T, N> lane_at(Idx idx) const {
-    return view().lane_at(idx);
+    return get_view().lane_at(idx);
   }
 
-  template <size_t N> Idx num_lanes() const { return view().num_lanes(); }
+  template <size_t N> Idx num_lanes() const { return get_view().num_lanes(); }
 
-  def_view<T, Idx> view() { return def_view<T, Idx>(data, _size); }
+  def_view<T, Idx> get_view() { return def_view<T, Idx>(data, _size); }
 
-  def_const_view<T, Idx> view() const {
+  def_const_view<T, Idx> get_view() const {
     return def_const_view<T, Idx>(data, _size);
   }
 
@@ -156,13 +156,13 @@ public:
     return data[_size++];
   }
 
-  iterator<T> begin() { return view().begin(); }
+  iterator<T> begin() { return get_view().begin(); }
 
-  const_iterator<T> begin() const { return view().begin(); }
+  const_iterator<T> begin() const { return get_view().begin(); }
 
-  iterator<T> end() { return view().end(); }
+  iterator<T> end() { return get_view().end(); }
 
-  const_iterator<T> end() const { return view().end(); }
+  const_iterator<T> end() const { return get_view().end(); }
 
 private:
   void destroy() {
